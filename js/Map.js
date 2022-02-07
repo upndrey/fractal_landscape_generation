@@ -9,26 +9,33 @@ export default function Map(canvasId='canvas', controlsId='controls') {
 }
 
 Map.prototype.init = function() {
-    let voronov = new Voronov(this.width, this.height);
-    const sites = voronov.generateSites(3);
-    const linesArray = voronov.generateLocuses();
-    this.draw.call(this, sites, linesArray);
+    let voronov = new Voronov(this.width, this.height, 200, 11, 999999);
+    const {sites, linesArray, crossingPointsArray} = voronov.init();
+    // const sites = voronov.generateSites(20);
+    // const {linesArray, crossingPointsArray} = voronov.generateLocuses();
+    this.draw.call(this, sites, linesArray, crossingPointsArray);
     //setInterval(this.draw.bind(this, sites, linesArray), 20);
 }
 
-Map.prototype.draw = function(sites, linesArray) {
+Map.prototype.draw = function(sites, linesArray, crossingPointsArray) {
     const ctx = this.ctx;
     ctx.clearRect(0, 0, this.width, this.height);
-    ctx.strokeRect(0, 0, this.width, this.height);
+    //ctx.strokeRect(0, 0, this.width, this.height);
     this.drawSites(sites);
-    this.drawLines(linesArray);
+    //this.drawLines(linesArray);
+    this.drawCrossingPoints(crossingPointsArray);
 }
 
 Map.prototype.drawSites = function(sites) {
     const ctx = this.ctx;
-    sites.forEach((site) => {
-        ctx.fillRect(site.x, site.y, 2, 2);
-        ctx.fillStyle = "#000";
+    sites.forEach((site, i) => {
+        ctx.fillStyle = "red";
+        ctx.fillRect(site.x - 2, site.y - 2, 5, 5);
+        // ctx.font = 'bold 30px sans-serif';
+        // ctx.strokeText(
+        //     `${i}`, 
+        //     site.x - 30, 
+        //     site.y);
     });
 }
 
@@ -43,5 +50,38 @@ Map.prototype.drawLines = function(linesArray) {
             ctx.strokeStyle = "#000";
             ctx.closePath();
         });
+    });
+}
+
+
+Map.prototype.drawCrossingPoints = function(crossingPointsArray) {
+    const ctx = this.ctx;
+    //console.log(crossingPointsArray);
+    crossingPointsArray.forEach((crossingPoints) => {
+        crossingPoints.color = "blue";
+    });
+    crossingPointsArray.forEach((crossingPoints, ind) => {
+        ctx.beginPath();
+        ctx.strokeStyle = "green";
+        ctx.fillStyle = crossingPoints.color;
+        ctx.moveTo(crossingPoints[0].x, crossingPoints[0].y);
+        crossingPoints.forEach((crossingPoint, i) => {
+            if(i != 0) 
+                ctx.lineTo(crossingPoint.x, crossingPoint.y);
+                // ctx.fillRect(crossingPoint.x-2, crossingPoint.y-2, 5, 5);
+                // ctx.fillStyle = "red";
+                // if(ind == 29) {
+                //     ctx.font = 'bold 25px sans-serif';
+                //     ctx.strokeText(
+                //         `(${Math.round(crossingPoint.x)}, ${Math.round(crossingPoint.y)})`, 
+                //         crossingPoint.x - 30, 
+                //         crossingPoint.y);
+                // }
+        });
+        ctx.lineTo(crossingPoints[0].x, crossingPoints[0].y);
+        // if(ind == 2) 
+            ctx.fill();
+        ctx.stroke();
+        ctx.closePath();
     });
 }
