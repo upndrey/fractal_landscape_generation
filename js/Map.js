@@ -1,4 +1,5 @@
 import Voronov from './Voronov.js';
+import Landscape from './Landscape.js';
 
 export default function Map(canvasId='canvas', controlsId='controls') {
     this.canvas = document.getElementById(canvasId);
@@ -9,12 +10,12 @@ export default function Map(canvasId='canvas', controlsId='controls') {
 }
 
 Map.prototype.init = function() {
-    let voronov = new Voronov(this.width, this.height, 200, 11, 999999);
+    let voronov = new Voronov(this.width, this.height, 100);
     const {sites, linesArray, crossingPointsArray} = voronov.init();
-    // const sites = voronov.generateSites(20);
-    // const {linesArray, crossingPointsArray} = voronov.generateLocuses();
-    this.draw.call(this, sites, linesArray, crossingPointsArray);
-    //setInterval(this.draw.bind(this, sites, linesArray), 20);
+    
+    let landscape = new Landscape(sites, crossingPointsArray, this.width, this.height);
+    const locuses = landscape.init();
+    this.draw.call(this, sites, linesArray, locuses);
 }
 
 Map.prototype.draw = function(sites, linesArray, crossingPointsArray) {
@@ -57,9 +58,6 @@ Map.prototype.drawLines = function(linesArray) {
 Map.prototype.drawCrossingPoints = function(crossingPointsArray) {
     const ctx = this.ctx;
     //console.log(crossingPointsArray);
-    crossingPointsArray.forEach((crossingPoints) => {
-        crossingPoints.color = "blue";
-    });
     crossingPointsArray.forEach((crossingPoints, ind) => {
         ctx.beginPath();
         ctx.strokeStyle = "green";

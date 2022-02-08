@@ -1,4 +1,4 @@
-export default function Voronov(canvasWidth, canvasHeight, sitesCount, seed=2, maxCallStack=9999) {
+export default function Voronov(canvasWidth, canvasHeight, sitesCount, seed = Math.round(Math.random() * 1000), maxCallStack = 999999) {
     this.sitesCount = sitesCount;
     this.sites;
     this.locuses;
@@ -15,6 +15,7 @@ Voronov.prototype.init = function() {
     if(locusesResult == -1) {
         this.sites = undefined;
         this.locuses = undefined;
+        this.seed = Math.round(Math.random() * 1000);
         return this.init();
     }
     let {linesArray, crossingPointsArray} = locusesResult;
@@ -211,8 +212,8 @@ Voronov.prototype.generateLocuses = function() {
                     resultCrossingPoints.push(crossPoint);
             }
         });
-        // if(ind == 29)
-        //     console.log(crossingPoints, resultCrossingPoints)
+        if(ind == 29)
+            console.log(crossingPoints, resultCrossingPoints)
         resultCrossingPoints = this.removeIntersections(resultCrossingPoints);
         if(resultCrossingPoints == -1) {
             regenerationFlag = 1;
